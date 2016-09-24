@@ -65,7 +65,7 @@ def run(model_path, batch_size, num_epoch, data_augmentation):
     model = mymodel.create_network(input_shape, output_shape)
 
     # let's train the model using SGD + momentum (how original).
-    sgd = SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
+    sgd = SGD(lr=0.02, decay=1e-5, momentum=0.9, nesterov=True)
     model.compile(loss='categorical_crossentropy',
                   optimizer=sgd,
                   metrics=['accuracy'],

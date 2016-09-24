@@ -12,6 +12,7 @@ from keras.preprocessing.image import ImageDataGenerator
 from keras.optimizers import SGD
 from keras.utils import np_utils
 from keras.callbacks import TensorBoard
+from keras.callbacks import EarlyStopping
 import importlib
 import click
 

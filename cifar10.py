@@ -70,6 +70,8 @@ def run(model_path, batch_size, num_epoch, data_augmentation):
                   metrics=['accuracy'],
                   )
 
+    early_stopping = EarlyStopping(monitor='val_loss', patience=2)
+
     if not data_augmentation:
         print('Not using data augmentation.')
         model.fit(X_train, Y_train,
@@ -77,20 +79,20 @@ def run(model_path, batch_size, num_epoch, data_augmentation):
                   nb_epoch=num_epoch,
                   validation_data=(X_test, Y_test),
                   shuffle=True,
-                  callbacks=[TensorBoard(log_dir=LOG_DIR)])
+                  callbacks=[TensorBoard(log_dir=LOG_DIR), early_stopping])
     else:
         print('Using real-time data augmentation.')
 
         # this will do preprocessing and realtime data augmentation
         datagen = ImageDataGenerator(
-            featurewise_center=False,  # set input mean to 0 over the dataset
+            featurewise_center=True,  # set input mean to 0 over the dataset
             samplewise_center=False,  # set each sample mean to 0
-            featurewise_std_normalization=False,  # divide inputs by std of the dataset
+            featurewise_std_normalization=True,  # divide inputs by std of the dataset
             samplewise_std_normalization=False,  # divide each input by its std
             zca_whitening=False,  # apply ZCA whitening
-            rotation_range=0,  # randomly rotate images in the range (degrees, 0 to 180)
-            width_shift_range=0,  # randomly shift images horizontally (fraction of total width)
-            height_shift_range=0,  # randomly shift images vertically (fraction of total height)
+            rotation_range=10,  # randomly rotate images in the range (degrees, 0 to 180)
+            width_shift_range=0.2,  # randomly shift images horizontally (fraction of total width)
+            height_shift_range=0.2,  # randomly shift images vertically (fraction of total height)
             horizontal_flip=True,  # randomly flip images
             vertical_flip=False)  # randomly flip images
 
@@ -103,7 +105,9 @@ def run(model_path, batch_size, num_epoch, data_augmentation):
                             batch_size=batch_size),
                             samples_per_epoch=X_train.shape[0],
                             nb_epoch=num_epoch,
-                            validation_data=(X_test, Y_test))
+                            validation_data=(X_test, Y_test),
+                            callbacks=[early_stopping])
+
 
 
 if __name__ == '__main__':
